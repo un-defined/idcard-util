@@ -1,0 +1,8 @@
+{
+  "name": "idcard",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:un-defined/idcard.git",
+  "author": "un-defined <659168590@qq.com>",
+  "license": "MIT"
+}
