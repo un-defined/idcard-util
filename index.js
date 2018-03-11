@@ -3,20 +3,26 @@
 (function () {
 
     function IdCard(card) {
+        if (['string', 'number'].indexOf(typeof card) === -1) return false; 
+        // TODO: 类型校验
+        this._card = card.toString();
         this._provinceCode = card.substr(0, 2);     // 省份代码
         this._cityCode = card.substr(2, 2);         // 城市代码
         this._districtCode = card.substr(4, 2);     // 区县代码
         this._birthCode = card.substr(6, 8);        // 出生年月日
-        this._sexCode = card.substr(14, 2);         // 所在地派出所代码
-        this._policeCode = card.substr(16, 1);      // 性别
+        this._policeCode = card.substr(14, 2);      // 所在地派出所代码
+        this._sexCode = card.substr(16, 1);         // 性别
         this._parityCode = card.charAt(17);         // 校验码
+        this._isValid = _isValid(this._card);       // 是否是有效证件
     }
 
-    IdCard.prototype.getLastChar = function () {
-        return this._parityCode;
+    IdCard.prototype.getLastChar = function() {
+        return _getLastChar(this._card);
     }
 
-    var _idCard = {};
+    IdCard.prototype.idValid = function() {
+        return this._isValid;
+    }
 
     var _checkFormat = function (card) {
         // TODO: 参数校验: 17或18位数字字符串，生日校验，地址编码
@@ -53,9 +59,7 @@
         return last = parity[sum % 11];
     }
 
-    // _idCard.lastNum = _getLastChar;
-
-    _idCard.isValid = function(card) {
+    var _isValid = function(card) {
         if (!_checkFormat(card)) return false;
         if (_getLastChar(card).toString() !== card.charAt(17)) return false;
         return true;

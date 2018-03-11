@@ -1,4 +1,9 @@
 var IdCard = require('./index');
-var card = '421102199105120518';
+var card = '42110219910512018X';
+// var card = function() {};
 // console.log(idCard.lastNum(card));
-console.log(new IdCard(card)); 
+var cardInfo = new IdCard(card);
+
+console.log(cardInfo); 
+console.log(cardInfo.getLastChar()); 
+console.log(cardInfo.idValid());
