@@ -1,5 +1,5 @@
 var IdCard = require('./index');
-var card = '42110219910512018X';
+var card = '421102199105120518';
 var cardInfo = new IdCard(card);
 
 console.log(cardInfo);
