@@ -2,30 +2,39 @@
 // TODO: 兼容15位
 (function () {
 
+    var CARD_REG = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+    var CARD_SPLITE_REG = /^(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X)$/;
+    var CITY_CODE = { 11: '北京', 12: '天津', 13: '河北', 14: '山西', 15: '内蒙古', 21: '辽宁', 22: '吉林', 23: '黑龙江 ', 31: '上海', 32: '江苏', 33: '浙江', 34: '安徽', 35: '福建', 36: '江西', 37: '山东', 41: '河南', 42: '湖北 ', 43: '湖南', 44: '广东', 45: '广西', 46: '海南', 50: '重庆', 51: '四川', 52: '贵州', 53: '云南', 54: '西藏 ', 61: '陕西', 62: '甘肃', 63: '青海', 64: '宁夏', 65: '新疆', 71: '台湾', 81: '香港', 82: '澳门', 91: '国外 ' };
+
     function IdCard(card) {
-        if (['string', 'number'].indexOf(typeof card) === -1) return false; 
-        // TODO: 类型校验
-        this._card = card.toString();
-        this._provinceCode = card.substr(0, 2);     // 省份代码
-        this._cityCode = card.substr(2, 2);         // 城市代码
-        this._districtCode = card.substr(4, 2);     // 区县代码
-        this._birthCode = card.substr(6, 8);        // 出生年月日
-        this._policeCode = card.substr(14, 2);      // 所在地派出所代码
-        this._sexCode = card.substr(16, 1);         // 性别
-        this._parityCode = card.charAt(17);         // 校验码
-        this._isValid = _isValid(this._card);       // 是否是有效证件
+
+        this._card = card;
+        this._isValid = this.isValid();
+        if (!this._isValid.result) return false;
+
+        var cardSplit = card.match(CARD_SPLITE_REG);
+
+        this._areaCode = cardSplit[1];              // 地址码
+        this._yearCode = cardSplit[2];              // 出生年
+        this._monthCode = cardSplit[3];             // 出身月
+        this._dayCode = cardSplit[4];               // 出生日
+        this._sequenceCode = cardSplit[5];          // 顺序码
+        this._parityCode = cardSplit[6];            // 校验码
     }
 
     IdCard.prototype.getLastChar = function() {
         return _getLastChar(this._card);
     };
 
-    IdCard.prototype.isValid = function() {
-        return this._isValid;
-    };
-
+    /**
+     * 获取性别
+     * @returns {Object} 性别信息
+     * @prop {Number} sex 性别代码  1: 男  0: 女
+     * @prop {String} desc 性别描述
+     * @prop {String} desc_cn 性别中文描述
+     */
     IdCard.prototype.getSex = function() {
-        var code = this._sexCode % 2;
+        var code = this._sequenceCode.charAt(2) % 2;
         return {
             sex: code,
             desc: ['female', 'male'][code],
@@ -39,11 +48,7 @@
      * @returns {Date} Date 类型时间
      */
     IdCard.prototype.getBirthDay = function(format) {
-        var date = this._birthCode;
-        var year = date.substr(0, 4);
-        var month = date.substr(4, 2);
-        var day = date.substr(6);
-        return new Date(year, month - 1, day);
+        return new Date(this._yearCode, this._monthCode - 1, this._dayCode);
     };
 
     /**
@@ -60,21 +65,9 @@
         }
         return age;
     };
-
+    
     IdCard.prototype.genRandom = function() {
         // return Math.random();
-    };
-
-    var _checkFormat = function (card) {
-        // TODO: 参数校验: 17或18位数字字符串，生日校验，地址编码
-        
-        // 最后一位必须为数字或者 'X'
-        var pre17Char = card.substr(0, 17);      // 证件前17位
-        var lastChar = card.charAt(17);          // 第十八位的值
-        if (!/^(\d|X)$/.test(lastChar)) return false;
-
-        return true;
-
     };
 
     /**
@@ -100,10 +93,61 @@
         return parity[sum % 11];
     };
 
-    var _isValid = function(card) {
-        if (!_checkFormat(card)) return false;
-        if (_getLastChar(card).toString() !== card.charAt(17)) return false;
-        return true;
+    IdCard.prototype.isValid = function() {
+
+        var card = this._card;
+        
+        // 数据类型校验
+        if (['string', 'number'].indexOf(typeof card) === -1) {
+            return {
+                result: false,
+                reason: '数据类型错误'
+            };
+        }
+
+        // 正则校验格式
+        if (!CARD_REG.test(card)) {
+            return {
+                result: false,
+                reason: '正则校验失败'
+            };
+        }
+
+        var cardSplit = card.match(CARD_SPLITE_REG);
+        var birthDate = new Date(cardSplit[2], cardSplit[3] - 1, cardSplit[4]);
+
+        // 校验省份码
+        if (!CITY_CODE[cardSplit[0].substr(0, 2)]) {
+            return {
+                result: false,
+                reason: '地址编码错误'
+            };
+        }
+
+        // 生日合法性校验
+        if (birthDate.getFullYear() !== Number(cardSplit[2]) 
+            || ((birthDate.getMonth() + 1) !== Number(cardSplit[3])) 
+            || (birthDate.getDate() !== Number(cardSplit[4]))
+            || birthDate > new Date()
+        ) {
+            return {
+                result: false,
+                reason: '生日校验失败'
+            };
+        }
+
+        // 校验传入的第18位与计算出来的校验码是否一致
+        if (_getLastChar(card).toString() !== cardSplit[6]) {
+            return {
+                result: false,
+                reason: '校验码错误'
+            };
+        }
+        
+        return {
+            result: true,
+            reason: ''
+        };
     };
 
     if (typeof exports !== 'undefined' || (typeof module !== 'undefined' && module.exports)) {
