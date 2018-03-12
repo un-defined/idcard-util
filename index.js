@@ -18,11 +18,52 @@
 
     IdCard.prototype.getLastChar = function() {
         return _getLastChar(this._card);
-    }
+    };
 
-    IdCard.prototype.idValid = function() {
+    IdCard.prototype.isValid = function() {
         return this._isValid;
-    }
+    };
+
+    IdCard.prototype.getSex = function() {
+        var code = this._sexCode % 2;
+        return {
+            sex: code,
+            desc: ['female', 'male'][code],
+            desc_cn: ['女', '男'][code]
+        };
+    };
+
+    /**
+     * 获取生日 TODO: 日期格式化功能
+     * @param {String} format 日期格式化的格式
+     * @returns {Date} Date 类型时间
+     */
+    IdCard.prototype.getBirthDay = function(format) {
+        var date = this._birthCode;
+        var year = date.substr(0, 4);
+        var month = date.substr(4, 2);
+        var day = date.substr(6);
+        return new Date(year, month - 1, day);
+    };
+
+    /**
+     * 获取年龄
+     * @returns {Number} 年龄
+     */
+    IdCard.prototype.getAge = function() {
+        var birthDate = this.getBirthDay();
+        var nowDate = new Date();
+        var age = nowDate.getFullYear() - birthDate.getFullYear();
+
+        if (nowDate.getMonth() < birthDate.getMonth() || (nowDate.getMonth() === birthDate.getMonth() && nowDate.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    };
+
+    IdCard.prototype.genRandom = function() {
+        // return Math.random();
+    };
 
     var _checkFormat = function (card) {
         // TODO: 参数校验: 17或18位数字字符串，生日校验，地址编码
@@ -34,36 +75,36 @@
 
         return true;
 
-    }
+    };
 
     /**
      * 根据前17位计算出第18位，公式：∑(ai×Wi)(mod 11)
      * @param {String} num 17或18位数字字符串
-     * @return {String | Boolean}
+     * @returns {String | Boolean}
      */
     var _getLastChar = function (num) {
         // TODO: 校验
         
-        var factor = [ 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 ];   //加权因子
-        var parity = [ 1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2 ];                     //校验位
+        var factor = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];   // 加权因子
+        var parity = [1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2];                     // 校验位
         var sum = 0;
         var ai = 0;
         var wi = 0;
-        var last = '';
+        var i = 0;
 
-        for (var i = 0; i < 17; i++) {
+        for (; i < 17; i++) {
             ai = num[i];
             wi = factor[i];
             sum += ai * wi;
         }
-        return last = parity[sum % 11];
-    }
+        return parity[sum % 11];
+    };
 
     var _isValid = function(card) {
         if (!_checkFormat(card)) return false;
         if (_getLastChar(card).toString() !== card.charAt(17)) return false;
         return true;
-    }
+    };
 
     if (typeof exports !== 'undefined' || (typeof module !== 'undefined' && module.exports)) {
         module.exports = IdCard;
@@ -74,7 +115,7 @@
     } else if (typeof define === 'function' && define.cmd) {
         define(function () {
             return IdCard;
-        })
+        });
     } else {
         window.idCard = IdCard;
     }
