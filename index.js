@@ -1,8 +1,13 @@
+// Doc: https://jingyan.baidu.com/article/7f41ececff944a593d095c8c.html
+// http://blog.csdn.net/yingms/article/details/53340532
 
 // TODO: 兼容15位
 (function () {
 
+    var utils = require('./lib/utils');
+
     var CARD_REG = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+    // var CARD_REG_STRICT = /^\d{6}((?:19|20)((?:\d{2}(?:0[13578]|1[02])(?:0[1-9]|[12]\d|3[01]))|(?:\d{2}(?:0[13456789]|1[012])(?:0[1-9]|[12]\d|30))|(?:\d{2}02(?:0[1-9]|1\d|2[0-8]))|(?:(?:0[48]|[2468][048]|[13579][26])0229)))\d{2}(\d)[xX\d]$/;
     var CARD_SPLITE_REG = /^(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X|x)$/;
     var CITY_CODE = { 11: '北京', 12: '天津', 13: '河北', 14: '山西', 15: '内蒙古', 21: '辽宁', 22: '吉林', 23: '黑龙江 ', 31: '上海', 32: '江苏', 33: '浙江', 34: '安徽', 35: '福建', 36: '江西', 37: '山东', 41: '河南', 42: '湖北 ', 43: '湖南', 44: '广东', 45: '广西', 46: '海南', 50: '重庆', 51: '四川', 52: '贵州', 53: '云南', 54: '西藏 ', 61: '陕西', 62: '甘肃', 63: '青海', 64: '宁夏', 65: '新疆', 71: '台湾', 81: '香港', 82: '澳门', 91: '国外 ' };
 
@@ -24,7 +29,7 @@
     }
 
     IdCard.prototype.getLastChar = function() {
-        return _getLastChar(this._card);
+        return utils.getLastChar(this._card);
     };
 
     /**
@@ -67,31 +72,21 @@
         return age;
     };
     
-    IdCard.prototype.genRandom = function() {
-        // return Math.random();
+    IdCard.prototype.genRandom = function(opts) {
+        var area = opts.area;
+        var date = opts.date;
+
+        
     };
 
-    /**
-     * 根据前17位计算出第18位，公式：∑(ai×Wi)(mod 11)
-     * @param {String} num 17或18位数字字符串
-     * @returns {String | Boolean}
-     */
-    var _getLastChar = function (num) {
-        // TODO: 校验
-        console.log(num, typeof num);
-        var factor = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];   // 加权因子
-        var parity = [1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2];                     // 校验位
-        var sum = 0;
-        var ai = 0;
-        var wi = 0;
-        var i = 0;
+    // 15 to 18
+    IdCard.prototype.upgrade = function() {
+        
+    };
 
-        for (; i < 17; i++) {
-            ai = num[i];
-            wi = factor[i];
-            sum += ai * wi;
-        }
-        return parity[sum % 11];
+    // 修复最后一位
+    IdCard.prototype.repair = function() {
+
     };
 
     IdCard.prototype.isValid = function() {
@@ -115,7 +110,7 @@
         }
 
         var cardSplit = String(card).match(CARD_SPLITE_REG);
-        var birthDate = new Date(cardSplit[2], cardSplit[3] - 1, cardSplit[4]);
+        var birthDate = String(card).substr(6, 8);
 
         // 校验省份码
         if (!CITY_CODE[cardSplit[0].substr(0, 2)]) {
@@ -126,11 +121,7 @@
         }
 
         // 生日合法性校验
-        if (birthDate.getFullYear() !== Number(cardSplit[2]) 
-            || ((birthDate.getMonth() + 1) !== Number(cardSplit[3])) 
-            || (birthDate.getDate() !== Number(cardSplit[4]))
-            || birthDate > new Date()
-        ) {
+        if (!utils.checkDate(birthDate)) {
             return {
                 result: false,
                 reason: '生日校验失败'
@@ -138,7 +129,7 @@
         }
 
         // 校验传入的第18位与计算出来的校验码是否一致
-        if (String(_getLastChar(card + '')) !== cardSplit[6].toUpperCase()) {
+        if (String(utils.getLastChar(card + '')) !== cardSplit[6].toUpperCase()) {
             return {
                 result: false,
                 reason: '校验码错误'
