@@ -28,8 +28,8 @@
         this._parityCode = cardSplit[6];            // 校验码
     }
 
-    IdCard.prototype.getLastChar = function() {
-        return utils.getLastChar(this._card);
+    IdCard.prototype.getParityCode = function() {
+        return utils.getParityCode(this._card);
     };
 
     /**
@@ -62,21 +62,23 @@
      * @returns {Number} 年龄
      */
     IdCard.prototype.getAge = function() {
-        var birthDate = this.getBirthDay();
-        var nowDate = new Date();
-        var age = nowDate.getFullYear() - birthDate.getFullYear();
-
-        if (nowDate.getMonth() < birthDate.getMonth() || (nowDate.getMonth() === birthDate.getMonth() && nowDate.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age;
+        return utils.getAge(this.getBirthDay());
     };
     
-    IdCard.prototype.genRandom = function(opts) {
-        var area = opts.area;
-        var date = opts.date;
+    /**
+     * 生产随机身份证号
+     * TODO: 生成随机区域码
+     * @param {Object} options 可配参数
+     */
+    IdCard.prototype.genRandom = function(options) {
+        var opts = options || {};
+        var area = opts.area || '440300';               // 行政区划代码
+        var date = opts.date || utils.randomDate();     // 生日
+        var sequenceCode = utils.randomNumString(3);    // 顺序码
 
-        
+        var pre17chars = area + date + sequenceCode;
+        var parityCode = utils.getParityCode(pre17chars);
+        return pre17chars + parityCode;
     };
 
     // 15 to 18
@@ -129,7 +131,7 @@
         }
 
         // 校验传入的第18位与计算出来的校验码是否一致
-        if (String(utils.getLastChar(card + '')) !== cardSplit[6].toUpperCase()) {
+        if (String(utils.getParityCode(card + '')) !== cardSplit[6].toUpperCase()) {
             return {
                 result: false,
                 reason: '校验码错误'
