@@ -40,7 +40,7 @@
 
     /**
      * 获取性别
-     * @returns {Object} 性别信息
+     * @return {Object} 性别信息
      * @prop {Number} sex 性别代码  1: 男  0: 女
      * @prop {String} desc 性别描述
      * @prop {String} desc_cn 性别中文描述
@@ -57,7 +57,7 @@
     /**
      * 获取生日 TODO: 日期格式化功能
      * @param {String} format 日期格式化的格式
-     * @returns {Date} Date 类型时间
+     * @return {Date} Date 类型时间
      */
     IdCard.prototype.getBirthDay = function(format) {
         return new Date(this._yearCode, this._monthCode - 1, this._dayCode);
@@ -65,7 +65,7 @@
 
     /**
      * 获取年龄
-     * @returns {Number} 年龄
+     * @return {Number} 年龄
      */
     IdCard.prototype.getAge = function() {
         return utils.getAge(this.getBirthDay());
@@ -75,6 +75,8 @@
      * 生产随机身份证号
      * TODO: 生成随机区域码
      * @param {Object} options 可配参数
+     * @prop {String} area 行政区划代码
+     * @prop {String} date 八位生日字符串
      */
     IdCard.prototype.genRandom = function(options) {
         var opts = options || {};
@@ -89,6 +91,10 @@
 
     /**
      * 修复卡号，15位到18位转换、17位补最后一位、校正第18位
+     * @return {Object}
+     * @prop {String} result 修复结果 'success' | 'fail'
+     * @prop {String} reason 描述
+     * @prop {String} value 修复后的值
      */
     IdCard.prototype.repair = function() {
         var card = this._card;
@@ -125,6 +131,10 @@
 
     /**
      * 校验卡号是否合法
+     * @param {Any} card 证件号
+     * @return {Object} 校验结果
+     * @prop {Boolean} result 是否通过
+     * @prop {String} reason 校验描述
      */
     var _validateCard = function(card) {
 
