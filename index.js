@@ -1,7 +1,6 @@
 // Doc: https://jingyan.baidu.com/article/7f41ececff944a593d095c8c.html
 // http://blog.csdn.net/yingms/article/details/53340532
 
-// TODO: 兼容15位
 (function () {
 
     var utils = require('./lib/utils');
@@ -14,11 +13,14 @@
     function IdCard(card) {
 
         this._card = card;
-        // this._isValid = this.isValid();
-        this._isValid = _validateCard(card);
+        if (/^\d{15}$/.test(card)) {
+            this._card = this.repair().value;
+        }
+        
+        this._isValid = _validateCard(this._card);
         if (!this._isValid.result) return false;
 
-        this._card = String(card).toUpperCase();
+        this._card = String(this._card).toUpperCase();
         var cardSplit = this._card.match(CARD_SPLITE_REG);
 
         this._areaCode = cardSplit[1];              // 地址码
@@ -29,6 +31,9 @@
         this._parityCode = cardSplit[6];            // 校验码
     }
 
+    /**
+     * 根据前17位计算出第18位
+     */
     IdCard.prototype.getParityCode = function() {
         return utils.getParityCode(this._card);
     };
@@ -92,7 +97,8 @@
         if (!/(^\d{15}$)|(^\d{17}$)|(^\d{17}(\d|X|x)$)|(^\d{18}$)/.test(card)) {
             return {
                 result: 'fail',
-                reason: '正则校验失败'
+                reason: '正则校验失败',
+                value: card
             };
         }
 
@@ -105,7 +111,8 @@
         if (!_validateCard(newCard)) {
             return {
                 result: 'fail',
-                reason: '新证件号未通过合法校验'
+                reason: '新证件号未通过合法校验',
+                value: newCard
             };
         }
 
@@ -137,21 +144,9 @@
             };
         }
 
-        // var cardSplit = String(card).match(CARD_SPLITE_REG);
-        // var birthDate = String(card).substr(6, 8);
-        
         var cardString = String(card).toUpperCase();
-        console.log(cardString);
         var provinceCode = cardString.substr(0, 2);
-        var isEarlyCard = cardString.length === 15;
-        var birthDate = isEarlyCard ? '19' + cardString.substr(6, 6) : cardString.substr(6, 8);
-
-        if (isEarlyCard) {
-            return {
-                result: false,
-                reason: '暂不支持解析初代身份证'
-            };
-        }
+        var birthDate = cardString.substr(6, 8);
         
         // 校验省份码
         if (!CITY_CODE[provinceCode]) {
