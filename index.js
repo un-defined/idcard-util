@@ -14,7 +14,8 @@
     function IdCard(card) {
 
         this._card = card;
-        this._isValid = this.isValid();
+        // this._isValid = this.isValid();
+        this._isValid = _validateCard(card);
         if (!this._isValid.result) return false;
 
         this._card = String(card).toUpperCase();
@@ -81,20 +82,45 @@
         return pre17chars + parityCode;
     };
 
-    // 15 to 18
-    IdCard.prototype.upgrade = function() {
-        
-    };
-
-    // 修复最后一位
+    /**
+     * 修复卡号，15位到18位转换、17位补最后一位、校正第18位
+     */
     IdCard.prototype.repair = function() {
+        var card = this._card;
+        var newCard = '';
 
+        if (!/(^\d{15}$)|(^\d{17}$)|(^\d{17}(\d|X|x)$)|(^\d{18}$)/.test(card)) {
+            return {
+                result: 'fail',
+                reason: '正则校验失败'
+            };
+        }
+
+        if (card.length === 15) {
+            card = card.substr(0, 6) + '19' + card.substr(6);
+        }
+        
+        newCard = card.substr(0, 17) + utils.getParityCode(card);
+
+        if (!_validateCard(newCard)) {
+            return {
+                result: 'fail',
+                reason: '新证件号未通过合法校验'
+            };
+        }
+
+        return {
+            result: 'success',
+            reason: '修复成功',
+            value: newCard
+        };
     };
 
-    IdCard.prototype.isValid = function() {
+    /**
+     * 校验卡号是否合法
+     */
+    var _validateCard = function(card) {
 
-        var card = this._card;
-        
         // 数据类型校验
         if (['string', 'number'].indexOf(typeof card) === -1) {
             return {
@@ -111,11 +137,24 @@
             };
         }
 
-        var cardSplit = String(card).match(CARD_SPLITE_REG);
-        var birthDate = String(card).substr(6, 8);
+        // var cardSplit = String(card).match(CARD_SPLITE_REG);
+        // var birthDate = String(card).substr(6, 8);
+        
+        var cardString = String(card).toUpperCase();
+        console.log(cardString);
+        var provinceCode = cardString.substr(0, 2);
+        var isEarlyCard = cardString.length === 15;
+        var birthDate = isEarlyCard ? '19' + cardString.substr(6, 6) : cardString.substr(6, 8);
 
+        if (isEarlyCard) {
+            return {
+                result: false,
+                reason: '暂不支持解析初代身份证'
+            };
+        }
+        
         // 校验省份码
-        if (!CITY_CODE[cardSplit[0].substr(0, 2)]) {
+        if (!CITY_CODE[provinceCode]) {
             return {
                 result: false,
                 reason: '地址编码错误'
@@ -131,7 +170,7 @@
         }
 
         // 校验传入的第18位与计算出来的校验码是否一致
-        if (String(utils.getParityCode(card + '')) !== cardSplit[6].toUpperCase()) {
+        if (String(utils.getParityCode(card + '')) !== cardString.charAt(17)) {
             return {
                 result: false,
                 reason: '校验码错误'
