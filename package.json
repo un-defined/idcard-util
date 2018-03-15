@@ -8,6 +8,14 @@
   "scripts": {
     "test": "ava"
   },
+  "ava": {
+    "files": [
+      "test/**/*.test.js"
+    ],
+    "concurrency": 25,
+    "serial": true,
+    "failFast": false
+  },
   "devDependencies": {
     "ava": "^0.25.0"
   }

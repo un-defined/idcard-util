@@ -1,6 +1,9 @@
-var IdCard = require('./lib/index');
-var card = '42110219910512018X';
-var cardInfo = new IdCard(card);
+import test from 'ava';
 
-console.log(cardInfo.genRandom());
-console.log(cardInfo.repair());
+var IdCard = require('../lib');
+var card = '42110219910512018X';
+var card2 = '421102910512018';
+
+test(t => {
+    t.deepEqual(new IdCard(card), new IdCard(card2));
+});
