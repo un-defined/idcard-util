@@ -4,7 +4,7 @@
 ## Installation
 
 ```javascript
-npm i idcard
+npm i idcard-util
 ```
 
 ## Usage
