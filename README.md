@@ -1,6 +1,7 @@
 ## idcard-util
 
 [![Build Status](https://travis-ci.org/un-defined/idcard-util.svg?branch=master)](https://travis-ci.org/un-defined/idcard-util)
+[![Coverage Status](https://coveralls.io/repos/github/un-defined/idcard-util/badge.svg?branch=master)](https://coveralls.io/github/un-defined/idcard-util?branch=master)
 
 中国公民身份证工具类
 

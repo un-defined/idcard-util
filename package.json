@@ -6,8 +6,9 @@
   "author": "un-defined <659168590@qq.com>",
   "license": "MIT",
   "scripts": {
-    "test": "nyc ava",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "test": "nyc ava -v",
+    "report": "nyc report --reporter=html",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "ava": {
     "files": [
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "ava": "^0.25.0",
+    "coveralls": "^3.0.0",
     "nyc": "^11.6.0"
   }
 }
