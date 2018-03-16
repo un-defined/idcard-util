@@ -1,3 +1,6 @@
+## idcard-util
+
+[![Build Status](https://travis-ci.org/un-defined/idcard-util.svg?branch=master)](https://travis-ci.org/un-defined/idcard-util)
 
 中国公民身份证工具类
 
@@ -39,7 +42,7 @@ IdCard {
 
 ## Methods
 
-**getParityCode()** {Number|String}
+**getParityCode()** {Number|String}  
 Calculate the parity code according to the first 17 digits
 
 ```javascript
@@ -48,7 +51,7 @@ console.log(cardInfo.getParityCode());
 > X
 ```
 
-**getSex()** {Object}
+**getSex()** {Object}  
 Return the sex of the card owner
 
 ```javascript
@@ -57,7 +60,7 @@ console.log(cardInfo.getSex());
 > { sex: 0, desc: 'female', desc_cn: '女' }
 ```
 
-**getBirthDay()** {Date}
+**getBirthDay()** {Date}  
 Return the birthday of the card owner
 
 ```javascript
@@ -66,7 +69,7 @@ console.log(cardInfo.getBirthDay());
 > 1991-05-11T16:00:00.000Z
 ```
 
-**getAge()** {Number}
+**getAge()** {Number}  
 Return the age of the card owner
 
 ```javascript
@@ -75,7 +78,7 @@ console.log(cardInfo.getAge());
 > 26
 ```
 
-**genRandom()** {String}
+**genRandom()** {String}  
 Generate a random idcard number
 
 ```javascript
@@ -84,7 +87,7 @@ console.log(cardInfo.getAge());
 > 440300197505035517
 ```
 
-**repair()** {String}
+**repair()** {String}  
 
 1. Update the card number form first generation to the second generation.
 2. Fill the 18th digit if it is missing.

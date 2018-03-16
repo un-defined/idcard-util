@@ -6,13 +6,16 @@ node_js:
 
 before_script:
   - npm install
+  - npm install -g codecov
 
 #运行的脚本命令
 script:
   - npm run test
 
-# after_success:
+after_success:
   # - npm run coverage
+  - istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
+  - codecov
 
 #指定分支，只有指定的分支提交时才会运行脚本
 branches:

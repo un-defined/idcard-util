@@ -6,7 +6,8 @@
   "author": "un-defined <659168590@qq.com>",
   "license": "MIT",
   "scripts": {
-    "test": "ava"
+    "test": "nyc ava",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
   },
   "ava": {
     "files": [
@@ -17,6 +18,7 @@
     "failFast": false
   },
   "devDependencies": {
-    "ava": "^0.25.0"
+    "ava": "^0.25.0",
+    "nyc": "^11.6.0"
   }
 }
