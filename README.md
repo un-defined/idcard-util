@@ -83,7 +83,7 @@ console.log(cardInfo.getAge());
 Generate a random idcard number
 
 ```javascript
-console.log(cardInfo.getAge());
+console.log(cardInfo.genRandom());
 
 > 440300197505035517
 ```

@@ -1,6 +1,6 @@
 {
   "name": "idcard-util",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An utility class for Chinese citizenship certificate",
   "main": "index.js",
   "repository": {
