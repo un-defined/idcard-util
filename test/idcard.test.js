@@ -27,6 +27,13 @@ test(t => {
 });
 
 test(t => {
+    t.notRegex(cardInfo1.genRandom({
+        area: '110111',
+        date: '19890228'
+    }), /^440300\d{11}(\d|X)$/);
+});
+
+test(t => {
     t.is(cardInfo1.getParityCode(), 'X');
 });
 
