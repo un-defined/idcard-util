@@ -38,6 +38,10 @@ test('获取生日', t => {
     t.deepEqual(cardInfo1.getBirthDay(), new Date('1991/05/12'));
 });
 
+test('获取生日', t => {
+    t.deepEqual(cardInfo1.getBirthDay('yyyy年MM月dd日'), '1991年05月12日');
+});
+
 test('获取生日（格式化）', t => {
     t.is(cardInfo1.getBirthDay('yyyy - MM - dd'), '1991 - 05 - 12');
 });

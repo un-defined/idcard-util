@@ -61,13 +61,17 @@ console.log(cardInfo.getSex());
 > { sex: 0, desc: 'female', desc_cn: '女' }
 ```
 
-**getBirthDay()** {Date}  
+**getBirthDay(formate)** {Date}  
 Return the birthday of the card owner
 
 ```javascript
 console.log(cardInfo.getBirthDay());
 
-> 1991-05-11T16:00:00.000Z
+> '1991-05-11T16:00:00.000Z'
+
+console.log(cardInfo.getBirthDay('yyyy年MM月dd日'));
+
+> '1991年05月12日'
 ```
 
 **getAge()** {Number}  
