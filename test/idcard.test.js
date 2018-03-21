@@ -6,8 +6,16 @@ var card2 = '421102910512018';
 var cardInfo1 = new IdCard(card1);
 var cardInfo2 = new IdCard(card2);
 
-test('修复身份证', t => {
-    t.deepEqual(cardInfo1, cardInfo2);
+test('身份证无效', t => {
+    t.false(new IdCard('421102199105120461')._isValid.result);
+});
+
+test('修复身份证 -- 421102910512018', t => {
+    t.is(cardInfo2.repair().result, 'success');
+});
+
+test('修复身份证 -- 421102911512018', t => {
+    t.is(new IdCard('421102911512018').repair().result, 'fail');
 });
 
 test('获取年龄', t => {
