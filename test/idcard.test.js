@@ -6,8 +6,20 @@ var card2 = '421102910512018';
 var cardInfo1 = new IdCard(card1);
 var cardInfo2 = new IdCard(card2);
 
-test('身份证无效', t => {
+test('无效身份证 -- 421102199105120461', t => {
     t.false(new IdCard('421102199105120461')._isValid.result);
+});
+
+test('无效身份证 -- 12345678', t => {
+    t.false(new IdCard('12345678')._isValid.result);
+});
+
+test('无效身份证 -- 999999199105120462', t => {
+    t.false(new IdCard('999999199105120462')._isValid.result);
+});
+
+test('无效身份证 -- null', t => {
+    t.false(new IdCard(null)._isValid.result);
 });
 
 test('修复身份证 -- 421102910512018', t => {
