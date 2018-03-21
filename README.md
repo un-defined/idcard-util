@@ -61,7 +61,7 @@ console.log(cardInfo.getSex());
 > { sex: 0, desc: 'female', desc_cn: '女' }
 ```
 
-**getBirthDay(formate)** {Date}  
+**getBirthDay(format)** {Date}  
 Return the birthday of the card owner
 
 ```javascript

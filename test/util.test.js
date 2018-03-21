@@ -54,18 +54,18 @@ test('计算年龄 -- 1989/3/22', t => {
     t.is(Util.getAge(new Date('1989/3/22')), 28);
 });
 
-test('格式化日期 -- 1989/3/22', t => {
+test('格式化日期', t => {
     t.is(Util.formatDate(new Date('2018/03/25 13:12:23'), 'yyyy - MM - dd'), '2018 - 03 - 25');
 });
 
-test('格式化日期 -- 1989/3/22', t => {
-    t.is(Util.formatDate(new Date('2018/03/25 13:12:23'), 'yyyy - M - d'), '2018 - 3 - 25');
+test('格式化日期', t => {
+    t.is(Util.formatDate(new Date('2018/03/25 13:12:23'), 'yy - M - d'), '18 - 3 - 25');
 });
 
-test('格式化日期 -- 1989/3/22', t => {
+test('格式化日期', t => {
     t.is(Util.formatDate(new Date('2018/03/25 13:12:23.123'), 'yyyy - M - d hh:mm:ss.S'), '2018 - 3 - 25 01:12:23.123');
 });
 
-test('格式化日期 -- 1989/3/22', t => {
+test('格式化日期', t => {
     t.is(Util.formatDate(new Date('2018/03/25 13:12:23'), 'yyyy - M qq 季度'), '2018 - 3 01 季度');
 });
